@@ -27,7 +27,7 @@ class DataFrameTest < Minitest::Test
 
   def test_array_missing
     df = Rover::DataFrame.new([{b: "one"}, {a: 2, b: "two"}, {a: 3}])
-    assert df[:a][0].nan?
+    assert df[:a][0].nil?
     assert_equal 2, df[:a][1]
     assert_equal 3, df[:a][2]
     assert_equal "one", df[:b][0]
@@ -425,5 +425,17 @@ class DataFrameTest < Minitest::Test
     df = Rover::DataFrame.new({"a" => 1..10})
     assert_equal Rover::DataFrame.new({"a" => 6..10}), df.tail
     assert_equal Rover::DataFrame.new({"a" => 8..10}), df.tail(3)
+  end
+
+  def test_filter
+    df = Rover::DataFrame.new({"a" => 1..10, "b" => (1..5).to_a + [6] * 5})
+    assert_equal Rover::DataFrame.new({"a" => 6..10, "b" => [6] * 5}), df.filter("b" => 6)
+    assert_equal Rover::DataFrame.new({"a" => [8], "b" => [6]}), df.filter("a" => 8, "b" => 6)
+  end
+
+  def test_group_by
+    df = Rover::DataFrame.new({"a" => 1..3, "b" => %w[x x z]})
+    expected_frames = [Rover::DataFrame.new({"a" => 1..2, "b" => ["x"] * 2}),Rover::DataFrame.new({"a" => [3], "b" => ["z"]})]
+    assert_equal expected_frames, df.group_by("b")
   end
 end
