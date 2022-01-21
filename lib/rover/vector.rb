@@ -359,14 +359,14 @@ module Rover
         data = data.to_a
 
         if type
-          data = data.map { |v| v || Float::NAN } if [:float, :float32].include?(type)
+          data = data.to_a.map { |v| v || Float::NAN } if [:float, :float32].include?(type)
           data = numo_type.cast(data)
         else
           data =
             if data.all? { |v| v.is_a?(Integer) }
               Numo::Int64.cast(data)
-            elsif data.all? { |v| v.is_a?(Numeric) || v.nil? }
-              Numo::DFloat.cast(data.map { |v| v || Float::NAN })
+            elsif data.all? { |v| v.is_a?(Numeric) }
+              Numo::DFloat.cast(data.to_a.map { |v| v || Float::NAN })
             elsif data.all? { |v| v == true || v == false }
               Numo::Bit.cast(data)
             else

@@ -483,6 +483,14 @@ module Rover
       end
     end
 
+    def filter(arguments)
+      self[arguments.keys.map { |key| (self[key] == arguments[key]) }.reduce(&:&)]
+    end
+
+    def group_by(column)
+      self[[column]].to_a.uniq.map {|args| filter(args) }
+    end
+
     private
 
     def check_key(key)
@@ -532,7 +540,7 @@ module Rover
         else
           matches.each do |r2|
             keys.each do |k|
-              vectors[k] << (r2[k] || r[k])
+              vectors[k] << (r2[k].nil? ? r[k] : r2[k])
             end
           end
         end

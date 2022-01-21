@@ -266,7 +266,7 @@ class VectorTest < Minitest::Test
   end
 
   def test_nan
-    vector = Rover::Vector.new([1, nil, 3])
+    vector = Rover::Vector.new([1, nil, 3], type: :float)
     assert vector[1].nan?
   end
 
